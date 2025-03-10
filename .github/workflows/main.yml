@@ -1,0 +1,24 @@
+name: Update Portfolio README
+
+on:
+  push:
+    branches:
+      - main  # またはあなたのデフォルトブランチ
+    paths:
+      - 'README.md'
+
+jobs:
+  update-portfolio:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Send README to Portfolio
+        env:
+          README_CONTENT: ${{ github.workspace }}/README.md
+          PORTFOLIO_API_ENDPOINT: 'https://portfolio-sintaro-katuta.vercel.app/api/update-readme'  # ポートフォリオサイトのAPIエンドポイント
+          API_KEY: ${{ secrets.PORTFOLIO_API_KEY }}  # APIキーをGitHub Secretsに保存
+        run: |
+          curl -X POST -H "Content-Type: text/markdown" -H "Authorization: Bearer $API_KEY" --data-binary @$README_CONTENT $PORTFOLIO_API_ENDPOINT
